@@ -90,6 +90,9 @@ def tick(dry_run: bool = False) -> None:
     # Draft logic: only send once per day, after all games are finished
     today_str = date.today().isoformat()
 
+    # Always push current state to Render (even if draft already sent today)
+    push_to_render(store.get_completed_games())
+
     if store.get_last_drafted_date() == today_str:
         log.info("Draft already saved for today.")
         return
@@ -113,9 +116,6 @@ def tick(dry_run: bool = False) -> None:
         log.info("Final draft saved for %s.", today_str)
     else:
         log.error("Failed to save draft.")
-
-    # Push current state to Render dashboard (every tick, whether or not new games)
-    push_to_render(store.get_completed_games())
 
 
 # ── CLI commands ───────────────────────────────────────────────────────────────
