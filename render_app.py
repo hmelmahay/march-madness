@@ -38,7 +38,7 @@ _HTML = """\
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="refresh" content="60">
+  <meta http-equiv="refresh" content="180">
   <title>March Madness Squares</title>
   <style>
     * {{ box-sizing: border-box; margin: 0; padding: 0; }}
@@ -93,7 +93,7 @@ _HTML = """\
     <h1>MARCH MADNESS SQUARES</h1>
     <div class="sub">{date_label}</div>
     <div class="live-badge">&#128308; LIVE</div>
-    <div class="refresh-note">Auto-refreshes every 60 seconds</div>
+    <div class="refresh-note">Auto-refreshes every 3 minutes</div>
   </div>
 
   {rounds_html}
