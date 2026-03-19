@@ -22,13 +22,26 @@ app = Flask(__name__)
 MT = pytz.timezone("America/Denver")
 
 SECRET = os.environ.get("DASHBOARD_SECRET", "")
+STATE_FILE = "/tmp/march_madness_state.json"
 
-# In-memory state — repopulated by the local scheduler every 10 minutes.
-# If Render restarts, the next scheduler tick automatically restores it.
-_state: dict = {
-    "completed_games": [],
-    "updated_at": None,
-}
+def _load_state() -> dict:
+    """Load persisted state from disk, or return empty state."""
+    try:
+        with open(STATE_FILE, "r") as f:
+            return json.load(f)
+    except Exception:
+        return {"completed_games": [], "updated_at": None}
+
+def _save_state(state: dict) -> None:
+    """Persist state to disk so it survives Render restarts."""
+    try:
+        with open(STATE_FILE, "w") as f:
+            json.dump(state, f)
+    except Exception as e:
+        log.warning("Could not save state to disk: %s", e)
+
+# Load state from disk on startup (survives restarts, not redeploys)
+_state: dict = _load_state()
 
 # ── HTML templates ─────────────────────────────────────────────────────────────
 
@@ -265,6 +278,7 @@ def update():
         )
     _state["completed_games"] = data.get("completed_games", [])
     _state["updated_at"] = data.get("updated_at")
+    _save_state(_state)
     log.info("Dashboard updated: %d games", len(_state["completed_games"]))
     return Response(
         json.dumps({"ok": True, "games": len(_state["completed_games"])}),
