@@ -45,19 +45,19 @@ def build_leaderboard(completed_games: list[dict]) -> list[dict]:
             totals[owner] = totals.get(owner, 0) + payout
             wins[owner] = wins.get(owner, 0) + 1
 
-    # Collect all unique display names from the grid so everyone appears
-    all_keys: set[str] = set()
+    # Collect all unique display names from the grid (deduplicated by full name)
+    seen: dict[str, dict] = {}
     for row in GRID:
-        all_keys.update(row)
+        for key in row:
+            full = display_name(key)
+            if full not in seen:
+                seen[full] = {
+                    "name": full,
+                    "total": totals.get(full, 0),
+                    "wins": wins.get(full, 0),
+                }
 
-    rows = []
-    for key in all_keys:
-        full = display_name(key)
-        rows.append({
-            "name": full,
-            "total": totals.get(full, 0),
-            "wins": wins.get(full, 0),
-        })
+    rows = list(seen.values())
 
     rows.sort(key=lambda x: (-x["total"], x["name"]))
     for i, row in enumerate(rows, 1):
