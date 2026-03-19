@@ -1,0 +1,6 @@
+requests>=2.31.0
+apscheduler>=3.10.4
+python-dotenv>=1.0.0
+pytz>=2024.1
+flask>=3.0.0
+gunicorn>=21.2.0

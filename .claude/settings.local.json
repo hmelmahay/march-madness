@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(pip3 install:*)",
+      "Bash(python3 -c \"x: list[dict] = []; print\\(''list[dict] ok''\\)\")",
+      "Bash(python3 -c \":*)",
+      "Bash(python3 main.py --status)",
+      "Bash(python3 -c \"from config import GRID; print\\(GRID[2][7]\\)\")",
+      "Bash(python3 -c \"from logic import calculate_winner; print\\(calculate_winner\\(0, 3\\)\\)\")",
+      "Bash(python3 -c \"from logic import calculate_winner; print\\(calculate_winner\\(4, 9\\)\\)\")",
+      "Bash(GMAIL_EMAIL=test@gmail.com GMAIL_PASSWORD=fake python3 -c \":*)",
+      "Bash(ngrok version:*)",
+      "Bash(brew install:*)",
+      "Bash(ngrok config:*)",
+      "Bash(pkill -f \"ngrok http\")",
+      "Bash(pkill -9 ngrok)",
+      "Bash(xargs kill:*)",
+      "Bash(npx --version)"
+    ]
+  }
+}
