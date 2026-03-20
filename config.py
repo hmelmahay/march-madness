@@ -27,7 +27,7 @@ NAME_MAP = {
     "Corey":   "Corey Graham",
     "Davis":   "Davis",
     "Spille":  "Spille",
-    "Garret":  "Garret Lip",
+    "Garret":  "Garret B.",
     "STEVE":   "Steve Burrill",
     "This":    "This Pool Sucks",
     "4Hrse":   "4 Horsemen",
