@@ -4,11 +4,25 @@ ESPN API client — fetch completed NCAA tournament games.
 
 import logging
 import time
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 from typing import Optional
 
+import pytz
 import requests
+
+MT = pytz.timezone("America/Denver")
+
+
+def _espn_date_to_mt(espn_date_str: str) -> str:
+    """Convert ESPN's UTC timestamp (e.g. '2026-03-20T03:49:00Z') to Mountain Time date."""
+    if not espn_date_str:
+        return ""
+    try:
+        dt_utc = datetime.strptime(espn_date_str[:19], "%Y-%m-%dT%H:%M:%S").replace(tzinfo=pytz.utc)
+        return dt_utc.astimezone(MT).date().isoformat()
+    except Exception:
+        return espn_date_str[:10]
 
 from config import ESPN_SCOREBOARD_URL, ROUNDS, ROUND_KEYWORD_MAP
 
@@ -51,7 +65,7 @@ def _detect_round(event: dict) -> Optional[int]:
                     return rnum
 
     # Fall back to date-based detection (safe because First Four dates ≠ round dates)
-    game_date_str = event.get("date", "")[:10]  # "YYYY-MM-DD"
+    game_date_str = _espn_date_to_mt(event.get("date", ""))
     for rnd in ROUNDS:
         if game_date_str in rnd["dates"]:
             return rnd["number"]
@@ -116,7 +130,7 @@ def _parse_game(event: dict, round_number: int) -> Optional[dict]:
         "loser_name": loser["name"],
         "loser_score": loser["score"],
         "payout": payout,
-        "date": event.get("date", "")[:10],
+        "date": _espn_date_to_mt(event.get("date", "")),
         "square_owner": None,  # filled by logic.py
     }
 
