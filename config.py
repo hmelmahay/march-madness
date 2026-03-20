@@ -11,7 +11,7 @@ GRID = [
     ["J.Brt",  "Bailey", "4Hrse",  "Y.Mitc", "Y.Mitc", "Tanner", "Holst",  "StevQ",  "MC",     "Marko" ],  # Row 2
     ["Kalski", "Lael",   "Mike",   "Larsen", "Phil",   "Elizab", "Jabo",   "J.Brt",  "Mason",  "Shuter"],  # Row 3
     ["Sports", "4Hrse",  "Kalski", "RickB",  "Shuter", "Lael",   "Marko",  "Larsen", "Jenny",  "4Hrse" ],  # Row 4
-    ["Spille", "Mallet", "STEVE",  "Kalski", "Corey",  "Rob",    "Lael",   "C.May",  "Holst",  "Garret"],  # Row 5
+    ["Spille", "Mallet", "STEVE",  "Kalski", "Corey",  "Rob",    "Lael",   "C.May",  "Holst",  "GarL"  ],  # Row 5
     ["Rob",    "Larsen", "C.May",  "Larsen", "Davis",  "Spille", "Marko",  "Sports", "Larsen", "Marko" ],  # Row 6
     ["Elizab", "J.Brt",  "4Hrse",  "Marko",  "J.Brt",  "Jabo",   "Kalski", "RickB",  "Robert", "This"  ],  # Row 7
     ["MC",     "Robert", "J.Brt",  "Yay.M",  "Yay.M",  "Rhodes", "RickB",  "Corey",  "4Hrse",  "C.May" ],  # Row 8
@@ -28,6 +28,7 @@ NAME_MAP = {
     "Davis":   "Davis",
     "Spille":  "Spille",
     "Garret":  "Garret B.",
+    "GarL":    "Garrett Lip",
     "STEVE":   "Steve Burrill",
     "This":    "This Pool Sucks",
     "4Hrse":   "4 Horsemen",
