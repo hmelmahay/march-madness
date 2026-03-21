@@ -47,6 +47,21 @@ def get_last_drafted_date() -> str:
     return _load().get("last_drafted_date") or ""
 
 
+def apply_date_corrections(corrections: dict) -> int:
+    """Update stored game dates that were saved with wrong (UTC) dates. Returns fix count."""
+    if not corrections:
+        return 0
+    data = _load()
+    count = 0
+    for game in data["completed_games"]:
+        if game["espn_id"] in corrections:
+            game["date"] = corrections[game["espn_id"]]
+            count += 1
+    if count:
+        _save(data)
+    return count
+
+
 def mark_drafted(date_str: str) -> None:
     data = _load()
     data["last_drafted_date"] = date_str

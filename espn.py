@@ -15,14 +15,20 @@ MT = pytz.timezone("America/Denver")
 
 
 def _espn_date_to_mt(espn_date_str: str) -> str:
-    """Convert ESPN's UTC timestamp (e.g. '2026-03-20T03:49:00Z') to Mountain Time date."""
+    """Convert ESPN's UTC timestamp to Mountain Time date.
+    Handles both 'YYYY-MM-DDTHH:MM:SSZ' and 'YYYY-MM-DDTHH:MMZ' formats.
+    """
     if not espn_date_str:
         return ""
-    try:
-        dt_utc = datetime.strptime(espn_date_str[:19], "%Y-%m-%dT%H:%M:%S").replace(tzinfo=pytz.utc)
-        return dt_utc.astimezone(MT).date().isoformat()
-    except Exception:
-        return espn_date_str[:10]
+    # Normalize: strip trailing Z, then try with and without seconds
+    s = espn_date_str.rstrip("Z")
+    for fmt in ("%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M"):
+        try:
+            dt_utc = datetime.strptime(s, fmt).replace(tzinfo=pytz.utc)
+            return dt_utc.astimezone(MT).date().isoformat()
+        except Exception:
+            continue
+    return espn_date_str[:10]
 
 from config import ESPN_SCOREBOARD_URL, ROUNDS, ROUND_KEYWORD_MAP
 
@@ -137,7 +143,7 @@ def _parse_game(event: dict, round_number: int) -> Optional[dict]:
 
 def has_active_games_today() -> bool:
     """Return True if any tournament games today are still in-progress or scheduled."""
-    today_str = date.today().strftime("%Y%m%d")
+    today_str = datetime.now(MT).date().strftime("%Y%m%d")
     data = _get(ESPN_SCOREBOARD_URL, params={"dates": today_str, "limit": 50})
     if not data:
         return False
@@ -150,6 +156,34 @@ def has_active_games_today() -> bool:
     return False
 
 
+def get_date_corrections(stored_games: list) -> dict:
+    """
+    Re-fetch ESPN scoreboard for any stored games with future dates and return
+    corrected dates. Returns {espn_id: correct_mt_date} for games that need fixing.
+    Only makes API calls when suspect games exist (avoids extra load normally).
+    """
+    today_str = datetime.now(MT).date().isoformat()
+    suspect = {g["espn_id"]: g["date"] for g in stored_games if g.get("date", "") > today_str}
+    if not suspect:
+        return {}
+
+    corrections = {}
+    for delta in range(3):
+        d = datetime.now(MT).date() - timedelta(days=delta)
+        data = _get(ESPN_SCOREBOARD_URL, params={"dates": d.strftime("%Y%m%d"), "limit": 50})
+        if not data:
+            continue
+        for event in data.get("events", []):
+            espn_id = str(event.get("id", ""))
+            if espn_id not in suspect:
+                continue
+            correct = _espn_date_to_mt(event.get("date", ""))
+            if correct and correct != suspect[espn_id]:
+                corrections[espn_id] = correct
+                log.info("Date fix: game %s %s -> %s", espn_id, suspect[espn_id], correct)
+    return corrections
+
+
 def fetch_new_games(known_ids: set[str]) -> list[dict]:
     """
     Poll ESPN for completed tournament games not yet in our store.
@@ -158,7 +192,7 @@ def fetch_new_games(known_ids: set[str]) -> list[dict]:
     new_games: list[dict] = []
     dates_to_check: list[str] = []
 
-    today = date.today()
+    today = datetime.now(MT).date()
     for delta in range(2):  # today and yesterday
         d = today - timedelta(days=delta)
         dates_to_check.append(d.strftime("%Y%m%d"))

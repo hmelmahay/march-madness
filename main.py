@@ -12,7 +12,7 @@ import argparse
 import logging
 import os
 import sys
-from datetime import date, datetime
+from datetime import datetime
 
 import pytz
 import requests
@@ -87,8 +87,14 @@ def tick(dry_run: bool = False) -> None:
     else:
         log.info("No new completed games found.")
 
+    # Fix any games stored with wrong (future) UTC dates
+    corrections = espn.get_date_corrections(store.get_completed_games())
+    fixed = store.apply_date_corrections(corrections)
+    if fixed:
+        log.info("Fixed dates for %d stored game(s).", fixed)
+
     # Draft logic: only send once per day, after all games are finished
-    today_str = date.today().isoformat()
+    today_str = datetime.now(MT).date().isoformat()
 
     # Always push current state to Render (even if draft already sent today)
     push_to_render(store.get_completed_games())
