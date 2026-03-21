@@ -6,7 +6,7 @@ March Madness Squares - Configuration & Static Data
 # GRID[row][col]  →  row = loser's last digit, col = winner's last digit
 GRID = [
     #  Col:  0         1         2         3         4         5         6         7         8         9
-    ["Corey",  "Davis",  "Spille", "Garret", "STEVE",  "Spille", "This",   "This",   "This",   "This"  ],  # Row 0
+    ["Corey",  "Davis",  "Spille", "Garret", "STEVE",  "Spille", "Jabo",   "This",   "This",   "This"  ],  # Row 0
     ["4Hrse",  "Sports", "Madiso", "C.May",  "Shuter", "Corey",  "J.Brt",  "Shuter", "Lael",   "This"  ],  # Row 1
     ["J.Brt",  "Bailey", "4Hrse",  "Y.Mitc", "Y.Mitc", "Tanner", "Holst",  "StevQ",  "MC",     "Marko" ],  # Row 2
     ["Kalski", "Lael",   "Mike",   "Larsen", "Phil",   "Elizab", "Jabo",   "J.Brt",  "Mason",  "Shuter"],  # Row 3
